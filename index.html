@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Town - Tập Trung Xây Dựng Thị Trấn Của Riêng Bạn</title>
+  <meta name="description"
+    content="Tập trung học tập và làm việc để xây dựng thị trấn của riêng bạn. Đồng hồ Pomodoro kết hợp đồ họa isometric sinh động.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
+    rel="stylesheet">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css?v=5.0">
+</head>
+
+<body>
+
+  <!-- ============================================================
+       SCREEN DIMMER OVERLAY (always present, transparent by default)
+  ============================================================ -->
+  <div class="screen-dimmer" id="screen-dimmer"></div>
+
+  <!-- ============================================================
+       VIEW 1: WELCOME SCREEN (Split-screen layout)
+  ============================================================ -->
+  <div class="view" id="view-welcome">
+    <!-- Topbar: Gear button & Language popup -->
+    <div class="welcome-topbar">
+      <button class="welcome-gear-btn" id="welcome-gear-btn" aria-label="Ngôn ngữ / Language">⚙️</button>
+      <div class="welcome-lang-popup hidden" id="welcome-lang-popup">
+        <button class="btn-lang active" data-lang="vi" id="welcome-lang-vi">🇻🇳 Tiếng Việt</button>
+        <button class="btn-lang" data-lang="en" id="welcome-lang-en">🇬🇧 English</button>
+      </div>
+    </div>
+
+    <div class="welcome-split-layout">
+      <!-- Left Column: Interactive Visual Showcase (2/3) -->
+      <div class="welcome-visual-column">
+        <div class="preview-model-badge" id="preview-model-badge">🏡 Hòn đảo Focus Town</div>
+        <div class="welcome-island-card">
+          <div class="welcome-hero" id="welcome-hero-svg">
+            <!-- JS will inject isometric SVG models here -->
+          </div>
+          <!-- Central Control Deck Pill (Option A) -->
+          <div class="welcome-switcher-pill">
+            <button class="btn-switcher" id="btn-prev-preview" aria-label="Trước">‹</button>
+            <span class="preview-model-name" id="preview-model-name">Hòn đảo Focus Town</span>
+            <button class="btn-switcher" id="btn-next-preview" aria-label="Tiếp">›</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Slogan & Morphing Auth Card (1/3) -->
+      <div class="welcome-auth-column">
+        <!-- Branding -->
+        <div class="welcome-brand">
+          <div class="welcome-logo-icon">🏡</div>
+          <h1 class="welcome-title">Focus Town</h1>
+          <p class="welcome-tagline" data-i18n="subtitle">Tập trung học tập, kiến tạo tương lai</p>
+        </div>
+
+        <!-- All-in-one Morphing Auth Card -->
+        <div class="welcome-auth-card" id="welcome-auth-card">
+
+          <!-- STATE 1: WELCOME ACTIONS -->
+          <div class="auth-state" id="auth-state-welcome">
+            <div class="welcome-actions">
+              <button class="btn btn-primary welcome-btn" id="btn-guest-mode" data-i18n="btnGuestMode">Sử dụng không cần
+                tài khoản →</button>
+              <div class="welcome-auth-row">
+                <button class="btn btn-secondary welcome-btn-half" id="btn-go-login" data-i18n="btnSignIn">Đăng
+                  nhập</button>
+                <button class="btn btn-secondary welcome-btn-half" id="btn-go-signup" data-i18n="btnSignUp">Đăng
+                  ký</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STATE 2: SIGN IN -->
+          <div class="auth-state hidden" id="auth-state-signin">
+            <div class="auth-header">
+              <div class="auth-icon">🔑</div>
+              <h2 data-i18n="signInTitle">Chào mừng trở lại!</h2>
+              <p data-i18n="signInSubtitle">Đăng nhập để tiếp tục xây dựng thị trấn</p>
+            </div>
+            <form class="auth-form" id="form-signin" novalidate>
+              <div class="form-group">
+                <label for="signin-email" data-i18n="labelEmail">Email</label>
+                <input type="email" id="signin-email" name="email" autocomplete="username" required
+                  placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="signin-password" data-i18n="labelPassword">Mật khẩu</label>
+                <div class="password-wrap">
+                  <input type="password" id="signin-password" name="password" autocomplete="current-password" required
+                    placeholder="••••••••">
+                  <button type="button" class="btn-show-password" aria-label="Hiển thị mật khẩu"
+                    data-target="signin-password">👁</button>
+                </div>
+              </div>
+              <div id="signin-error" class="auth-message error hidden"></div>
+              <button type="submit" class="btn btn-primary auth-submit" id="btn-signin-submit"
+                data-i18n="btnSignIn">Đăng nhập</button>
+            </form>
+            <div class="auth-footer">
+              <button class="btn-text-link" id="btn-go-forgot" data-i18n="btnForgotPassword">Quên mật khẩu?</button>
+              <span class="auth-divider">·</span>
+              <button class="btn-text-link" id="btn-switch-to-signup" data-i18n="btnNoAccount">Chưa có tài khoản? Đăng
+                ký</button>
+            </div>
+            <button class="btn-back-welcome" id="btn-back-welcome-signin">← Quay lại trang chủ</button>
+          </div>
+
+          <!-- STATE 3: SIGN UP -->
+          <div class="auth-state hidden" id="auth-state-signup">
+            <div class="auth-header">
+              <div class="auth-icon">🌱</div>
+              <h2 data-i18n="signUpTitle">Xây dựng thị trấn</h2>
+              <p data-i18n="signUpSubtitle">Tạo tài khoản để lưu tiến trình vĩnh viễn</p>
+            </div>
+            <form class="auth-form" id="form-signup" novalidate>
+              <div class="form-group">
+                <label for="signup-name" data-i18n="labelName">Tên của bạn</label>
+                <input type="text" id="signup-name" name="name" autocomplete="name" placeholder="Nguyễn Văn A">
+              </div>
+              <div class="form-group">
+                <label for="signup-email" data-i18n="labelEmail">Email</label>
+                <input type="email" id="signup-email" name="email" autocomplete="username" required
+                  placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="signup-password" data-i18n="labelPassword">Mật khẩu</label>
+                <div class="password-wrap">
+                  <input type="password" id="signup-password" name="new-password" autocomplete="new-password" required
+                    minlength="6" placeholder="Tối thiểu 6 ký tự">
+                  <button type="button" class="btn-show-password" aria-label="Hiển thị mật khẩu"
+                    data-target="signup-password">👁</button>
+                </div>
+              </div>
+              <div class="guest-sync-notice hidden" id="guest-sync-notice">
+                <span>🏗️</span>
+                <span data-i18n="guestSyncNotice">Tiến trình thị trấn sẽ được đồng bộ vào tài khoản mới!</span>
+              </div>
+              <div id="signup-error" class="auth-message error hidden"></div>
+              <button type="submit" class="btn btn-primary auth-submit" id="btn-signup-submit" data-i18n="btnSignUp">Tạo
+                tài khoản</button>
+            </form>
+            <div class="auth-footer">
+              <button class="btn-text-link" id="btn-switch-to-signin" data-i18n="btnHaveAccount">Đã có tài khoản? Đăng
+                nhập</button>
+            </div>
+            <button class="btn-back-welcome" id="btn-back-welcome-signup">← Quay lại trang chủ</button>
+          </div>
+
+          <!-- STATE 4: FORGOT PASSWORD -->
+          <div class="auth-state hidden" id="auth-state-forgot">
+            <div class="auth-header">
+              <div class="auth-icon">🗝️</div>
+              <h2 data-i18n="forgotTitle">Khôi phục mật khẩu</h2>
+              <p data-i18n="forgotSubtitle">Nhập email đã đăng ký để xem lại mật khẩu</p>
+            </div>
+            <form class="auth-form" id="form-forgot" novalidate>
+              <div class="form-group">
+                <label for="forgot-email" data-i18n="labelEmail">Email</label>
+                <input type="email" id="forgot-email" name="email" autocomplete="username" required
+                  placeholder="your@email.com">
+              </div>
+              <div id="forgot-result" class="auth-message hidden"></div>
+              <button type="submit" class="btn btn-primary auth-submit" id="btn-forgot-submit"
+                data-i18n="btnRecoverPassword">Khôi phục mật khẩu</button>
+            </form>
+            <div class="auth-footer">
+              <button class="btn-text-link" id="btn-back-to-signin" data-i18n="btnBackToSignIn">← Quay lại đăng
+                nhập</button>
+            </div>
+            <button class="btn-back-welcome" id="btn-back-welcome-forgot">← Quay lại trang chủ</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       VIEW 3: MAIN APP (Dashboard with Tab Navigation)
+  ============================================================ -->
+  <div class="view hidden" id="view-app">
+
+    <!-- App Header: Full-width top bar -->
+    <header class="app-header">
+      <!-- Left: Logo -->
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">🏡</span>
+          <span class="logo-text" data-i18n="title">Focus Town</span>
+        </div>
+      </div>
+
+      <!-- Center: Tab Navigation -->
+      <div class="header-center">
+        <nav class="tab-nav" role="tablist" aria-label="Điều hướng ứng dụng">
+          <button class="tab-btn active" data-tab="focus" role="tab" aria-selected="true" id="tab-btn-focus">
+            <span class="tab-icon">⏱️</span>
+            <span class="tab-label" data-i18n="tabFocus">Tập trung</span>
+          </button>
+          <button class="tab-btn" data-tab="town" role="tab" aria-selected="false" id="tab-btn-town">
+            <span class="tab-icon">🏡</span>
+            <span class="tab-label" data-i18n="tabTown">Thị trấn</span>
+          </button>
+          <button class="tab-btn" data-tab="profile" role="tab" aria-selected="false" id="tab-btn-profile">
+            <span class="tab-icon">📊</span>
+            <span class="tab-label" data-i18n="tabProfile">Thành tích</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Right: User profile, settings and logout -->
+      <div class="header-right">
+        <div class="header-user" id="header-user">
+          <div class="user-avatar-container" id="header-avatar-container">
+            <span class="user-avatar" id="header-avatar-fallback">👤</span>
+            <img class="user-avatar-img hidden" id="header-avatar-img" src="" alt="Avatar">
+          </div>
+          <span class="user-greeting" id="user-greeting">Xin chào!</span>
+        </div>
+
+        <!-- Settings button in top bar -->
+        <button class="btn-settings" id="btn-settings-trigger" title="Cài đặt giao diện">⚙️</button>
+
+        <!-- Logout button -->
+        <button class="btn btn-sm btn-secondary" id="btn-logout" data-i18n="btnLogout">Đăng xuất</button>
+      </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container">
+
+      <!-- ========== TAB PANEL 1: FOCUS CENTER ========== -->
+      <div class="tab-panel active" id="tab-focus" role="tabpanel" aria-labelledby="tab-btn-focus" tabindex="-1">
+        <main class="main-layout" id="main-layout">
+          <!-- Left Column: Unified Workspace & Diorama Dashboard -->
+          <div class="left-column">
+            <!-- Unified Workspace Card -->
+            <section class="stage-section card unified-workspace-card">
+              <div class="stage-header">
+                <span class="badge" id="session-badge" data-i18n="readyBadge">Sẵn sàng khởi công</span>
+                <h2 id="building-title" data-i18n="emptyLand">Vùng đất trống</h2>
+              </div>
+
+              <!-- Diorama Area -->
+              <div id="normal-stage-placeholder" class="workspace-stage">
+                <div class="construction-stage" id="construction-stage">
+                  <div class="svg-wrapper" id="active-svg-wrapper"></div>
+                  <!-- Floating Prepare/Build Badge -->
+                  <div class="floating-build-badge" id="floating-build-badge">
+                    <span class="badge-icon" id="floating-badge-icon">🏕️</span>
+                    <span class="badge-text" id="floating-badge-text">Chuẩn bị xây dựng</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Timer Display Row (Below Diorama) -->
+              <div class="timer-display-row">
+                <div class="timer-display-left">
+                  <span class="time-left" id="time-left">25:00</span>
+                  <span class="timer-phase" id="timer-phase" data-i18n="phaseReady">Thời gian tập trung</span>
+                </div>
+                <div class="timer-display-right">
+                  <div class="timer-circle-wrapper-small">
+                    <svg class="timer-svg" viewBox="0 0 200 200">
+                      <circle class="timer-track" cx="100" cy="100" r="90"></circle>
+                      <circle class="timer-progress" id="timer-progress" cx="100" cy="100" r="90"></circle>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom Stats Row -->
+              <div class="workspace-stats-row">
+                <div class="stat-col">
+                  <span class="stat-val" id="workspace-stat-time">0</span>
+                  <span class="stat-lbl">Phút Học</span>
+                </div>
+                <div class="stat-col">
+                  <span class="stat-val" id="workspace-stat-completed">0</span>
+                  <span class="stat-lbl">Hoàn Thành</span>
+                </div>
+                <div class="stat-col">
+                  <span class="stat-val" id="workspace-stat-buildings">0</span>
+                  <span class="stat-lbl">Công Trình</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Building Flyout Panel (opens between left-column and control-section) -->
+          <section class="building-flyout-card card panel-card hidden" id="building-flyout-card" role="dialog"
+            aria-modal="true" aria-label="Chọn công trình xây dựng">
+            <div class="flyout-header">
+              <h3 data-i18n="selectBuildingLabel">Chọn công trình</h3>
+              <button class="btn-flyout-close" id="btn-flyout-close" aria-label="Đóng bảng chọn">✕</button>
+            </div>
+            <div class="panel-scroll-content">
+              <div class="themes-vertical-stack" id="themes-grid">
+                <button class="btn-theme-select active" data-theme="tent" id="btn-theme-tent">
+                  <span class="theme-icon">🏕️</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeTent">Lều dã ngoại</span>
+                    <span class="theme-desc" data-i18n="themeDescTent">Đơn sơ</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="cafe" id="btn-theme-cafe">
+                  <span class="theme-icon">☕</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeCafe">Tiệm cà phê</span>
+                    <span class="theme-desc" data-i18n="themeDescCafe">Ấm cúng</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="stadium" id="btn-theme-stadium">
+                  <span class="theme-icon">🏟️</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeStadium">Sân vận động</span>
+                    <span class="theme-desc" data-i18n="themeDescStadium">Sôi động</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="library" id="btn-theme-library" disabled>
+                  <span class="theme-icon">📚</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeLibrary">Thư viện sách</span>
+                    <span class="theme-desc" data-i18n="themeDescLibrary">🔒 Hoàn thành 2 phiên để mở</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="campus" id="btn-theme-campus" disabled>
+                  <span class="theme-icon">🏫</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeCampus">Khuôn viên trường</span>
+                    <span class="theme-desc" data-i18n="themeDescCampus">🔒 Hoàn thành 4 phiên để mở</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="observatory" id="btn-theme-observatory" disabled>
+                  <span class="theme-icon">🔭</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeObservatory">Đài thiên văn</span>
+                    <span class="theme-desc" data-i18n="themeDescObservatory">🔒 Hoàn thành 6 phiên để mở</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="lighthouse" id="btn-theme-lighthouse" disabled>
+                  <span class="theme-icon">🚨</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeLighthouse">Ngọn hải đăng</span>
+                    <span class="theme-desc" data-i18n="themeDescLighthouse">🔒 Hoàn thành 8 phiên để mở</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+                <button class="btn-theme-select" data-theme="berlin" id="btn-theme-berlin" disabled>
+                  <span class="theme-icon">🏛️</span>
+                  <div class="theme-info-wrap">
+                    <span class="theme-name" data-i18n="themeBerlin">Thành phố Berlin</span>
+                    <span class="theme-desc" data-i18n="themeDescBerlin">🔒 Hoàn thành 10 phiên để mở</span>
+                  </div>
+                  <span class="theme-check-icon">✓</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Central Focus Card (Only visible in Focus Mode) -->
+          <div class="focus-card-container hidden" id="focus-card-container">
+            <div class="card focus-card">
+              <div class="focus-card-header">
+                <span class="badge active" id="focus-session-badge" data-i18n="buildingBadge">Đang thi công...</span>
+                <span class="timer-phase" id="focus-timer-phase" data-i18n="phaseFocus">Tập trung cao độ</span>
+              </div>
+
+              <div class="focus-time-display" id="focus-time-display">25:00</div>
+
+              <div class="mini-progress-bar-wrap">
+                <div class="mini-progress-bar-fill" id="mini-progress-bar-fill"></div>
+              </div>
+
+              <div id="focus-stage-placeholder" style="width: 100%;"></div>
+
+              <div class="focus-actions">
+                <button class="btn btn-focus-action" id="btn-focus-pause">
+                  <span class="action-icon" id="icon-focus-pause">⏸️</span>
+                  <span id="text-focus-pause">Tạm dừng</span>
+                </button>
+                <button class="btn btn-focus-action" id="btn-focus-stop">
+                  <span class="action-icon">❌</span>
+                  <span data-i18n="confirmOk">Kết thúc</span>
+                </button>
+              </div>
+
+              <div class="focus-hint" data-i18n="focusSubtext">Hoàn thành để xây dựng công trình vào thị trấn</div>
+            </div>
+          </div>
+
+          <!-- Right Section: Controls & Stats -->
+          <section class="control-section">
+            <!-- Main Controls Card -->
+            <div class="card panel-card">
+              <h3 data-i18n="controlTitle">Bảng điều khiển</h3>
+
+              <div class="panel-scroll-content">
+
+                <!-- Unified Study Duration Selector -->
+                <div class="control-group">
+                  <label data-i18n="selectTimeLabel"><span class="step-badge">01</span>Chọn thời gian học</label>
+
+                  <!-- Time Mode Tabs (Segmented Control) -->
+                  <div class="time-picker-tabs" role="tablist">
+                    <button class="time-picker-tab active" data-mode="preset" role="tab" aria-selected="true"
+                      id="tab-time-preset" data-i18n="timePresetTab">⚡ Mốc Nhanh</button>
+                    <button class="time-picker-tab" data-mode="custom" role="tab" aria-selected="false"
+                      id="tab-time-custom" data-i18n="timeCustomTab">⏱️ Tự Chọn</button>
+                  </div>
+
+                  <!-- Mode 1: Presets View -->
+                  <div class="time-view-container" id="time-preset-view">
+                    <div class="presets-grid" id="presets-grid"></div>
+                  </div>
+
+                  <!-- Mode 2: Hour & Minute Custom Picker View -->
+                  <div class="time-view-container hidden" id="time-custom-view">
+                    <div class="hour-minute-picker">
+                      <!-- Hours selector row -->
+                      <div class="picker-row">
+                        <span class="picker-row-label" data-i18n="pickerHoursLabel">Chọn giờ:</span>
+                        <div class="picker-chips" id="picker-hours-chips" role="radiogroup" aria-label="Chọn số giờ">
+                          <!-- Dynamically populated by JS -->
+                        </div>
+                      </div>
+
+                      <!-- Minutes selector row -->
+                      <div class="picker-row">
+                        <span class="picker-row-label" data-i18n="pickerMinutesLabel">Chọn phút:</span>
+                        <div class="picker-chips" id="picker-minutes-chips" role="radiogroup" aria-label="Chọn số phút">
+                          <!-- Dynamically populated by JS -->
+                        </div>
+                      </div>
+
+                      <!-- Dynamic Time Summary Badge -->
+                      <div class="picker-summary-wrapper">
+                        <div class="picker-summary-badge" id="picker-summary-badge">
+                          <span class="badge-icon">⏱️</span>
+                          <span class="badge-text" id="picker-summary-text">25 phút</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Choose Building Theme — Trigger Button (flyout opens on click) -->
+                <div class="control-group">
+                  <label data-i18n="selectBuildingLabel"><span class="step-badge">02</span>Chọn công trình xây
+                    dựng</label>
+                  <button class="btn-selected-building-trigger" id="btn-selected-building-trigger" aria-haspopup="true"
+                    aria-expanded="false">
+                    <span class="trigger-building-icon" id="selected-building-icon">🏕️</span>
+                    <div class="theme-info-wrap">
+                      <span class="theme-name" id="selected-building-name">Lều dã ngoại</span>
+                      <span class="theme-desc" id="selected-building-desc">Đơn sơ </span>
+                    </div>
+                    <span class="trigger-triangle" id="trigger-triangle">▼</span>
+                  </button>
+                </div>
+
+
+                <!-- Ambient Audio Control -->
+                <div class="control-group">
+                  <label data-i18n="ambientLabel"><span class="step-badge">03</span>Âm thanh nền tập trung</label>
+                  <div class="sounds-grid">
+                    <button class="btn-sound active" data-sound="off">
+                      <span class="sound-icon">🔇</span>
+                      <span class="sound-label" data-i18n="soundOff">Tắt âm</span>
+                    </button>
+                    <button class="btn-sound" data-sound="rain">
+                      <span class="sound-icon">🌧️</span>
+                      <span class="sound-label" data-i18n="soundRain">Tiếng mưa</span>
+                    </button>
+                    <button class="btn-sound" data-sound="wind">
+                      <span class="sound-icon">💨</span>
+                      <span class="sound-label" data-i18n="soundWind">Tiếng gió</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div><!-- /.panel-scroll-content -->
+
+              <!-- Action Buttons -->
+              <div class="action-buttons">
+                <button class="btn btn-primary" id="btn-start">
+                  <span data-i18n="btnStart">Bắt đầu tập trung</span> <span class="arrow-icon">→</span>
+                </button>
+                <button class="btn btn-danger hidden" id="btn-giveup" data-i18n="btnGiveUp">Dừng lại (Bỏ cuộc)</button>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- ========== TAB PANEL 2: MY TOWN ========== -->
+      <div class="tab-panel hidden" id="tab-town" role="tabpanel" aria-labelledby="tab-btn-town" tabindex="-1">
+        <section class="town-section">
+          <div class="town-header">
+            <div>
+              <h2 data-i18n="townTitle">🏡 Thị trấn của bạn</h2>
+              <p class="town-subtitle" data-i18n="townSubtitle">Nơi lưu giữ những nỗ lực học tập chăm chỉ dưới dạng các
+                công trình kiến trúc</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-reset-town" data-i18n="btnResetTown">Khởi động lại thị
+              trấn</button>
+          </div>
+
+          <div class="town-map-container">
+            <div class="town-grid" id="town-grid">
+              <!-- Grid items generated dynamically by JS -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ========== TAB PANEL 3: PROFILE & STATS ========== -->
+      <div class="tab-panel hidden" id="tab-profile" role="tabpanel" aria-labelledby="tab-btn-profile" tabindex="-1">
+        <section class="profile-section">
+          <!-- User Profile Card -->
+          <div class="card profile-card">
+            <div class="profile-avatar-container" id="profile-avatar-container" title="Nhấp để tải lên ảnh đại diện">
+              <div class="profile-avatar" id="profile-avatar">🏙️</div>
+              <img class="profile-avatar-img hidden" id="profile-avatar-img" src="" alt="Profile Avatar">
+              <div class="profile-avatar-overlay">
+                <span class="upload-icon">📷</span>
+              </div>
+              <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+            </div>
+            <div class="profile-info">
+              <h2 class="profile-name" id="profile-name">Người dùng</h2>
+              <p class="profile-email" id="profile-email">guest@focustown.local</p>
+              <span class="profile-badge" id="profile-mode-badge">Chế độ khách</span>
+            </div>
+          </div>
+
+          <!-- Detailed Stats Card -->
+          <div class="card stats-detail-card">
+            <h3 data-i18n="statsTitle">Thành tích học tập</h3>
+            <div class="stats-detail-grid">
+              <div class="stat-detail-item">
+                <div class="stat-detail-icon">⏱️</div>
+                <div class="stat-detail-content">
+                  <span class="stat-num-large" id="profile-stat-time">0</span>
+                  <span class="stat-detail-label" data-i18n="statFocusTime">Phút tập trung</span>
+                </div>
+              </div>
+              <div class="stat-detail-item">
+                <div class="stat-detail-icon">🏗️</div>
+                <div class="stat-detail-content">
+                  <span class="stat-num-large" id="profile-stat-completed">0</span>
+                  <span class="stat-detail-label" data-i18n="statCompleted">Công trình hoàn thành</span>
+                </div>
+              </div>
+              <div class="stat-detail-item">
+                <div class="stat-detail-icon">💔</div>
+                <div class="stat-detail-content">
+                  <span class="stat-num-large" id="profile-stat-failed">0</span>
+                  <span class="stat-detail-label" data-i18n="statFailed">Phiên bị bỏ dở</span>
+                </div>
+              </div>
+              <div class="stat-detail-item">
+                <div class="stat-detail-icon">🏙️</div>
+                <div class="stat-detail-content">
+                  <span class="stat-num-large" id="profile-stat-buildings">0</span>
+                  <span class="stat-detail-label" data-i18n="statBuildings">Công trình trong thị trấn</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Actions Card (Upgrade for guest) -->
+          <div class="card" id="profile-account-card">
+            <!-- Content injected by JS based on login state -->
+          </div>
+        </section>
+      </div>
+    </div><!-- end .app-container -->
+  </div><!-- end #view-app -->
+
+  <!-- ============================================================
+       NOTIFICATIONS & MODALS (shared across views)
+  ============================================================ -->
+
+  <!-- Completion Modal -->
+  <div class="modal-overlay hidden" id="modal-completion">
+    <div class="modal-card">
+      <div class="modal-icon">🎉</div>
+      <h2 data-i18n="modalTitle">Chúc mừng bạn đã hoàn thành!</h2>
+      <p id="modal-message">Bạn đã tập trung thành công trong 25 phút và xây dựng thành công một lều dã ngoại!</p>
+      <button class="btn btn-primary" id="btn-modal-close" data-i18n="modalClose">Quay lại thị trấn</button>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Give Up Modal -->
+  <div class="modal-overlay hidden" id="modal-confirm-giveup">
+    <div class="modal-card">
+      <div class="modal-icon">🏚️</div>
+      <h2 data-i18n="confirmModalTitle">Xác nhận dừng phiên</h2>
+      <p id="modal-confirm-message" data-i18n="confirmGiveUp">Công trường thi công của bạn sẽ bị đóng cửa bỏ hoang đấy!
+      </p>
+      <div class="modal-actions" style="display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: center;">
+        <button class="btn btn-secondary" id="btn-confirm-cancel" data-i18n="confirmCancel">Tiếp tục học</button>
+        <button class="btn btn-danger" id="btn-confirm-ok" data-i18n="confirmOk">Bỏ cuộc</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Overlay Backdrop (Global) -->
+  <div class="settings-overlay hidden" id="settings-overlay"></div>
+
+  <!-- Settings Panel (Global) -->
+  <div class="settings-panel hidden" id="settings-panel">
+    <div class="settings-panel-header">
+      <h3 data-i18n="settingsTitle">Cài đặt giao diện</h3>
+      <button class="btn-settings-close" id="btn-settings-close" aria-label="Đóng cài đặt">✕</button>
+    </div>
+    <p class="settings-desc" data-i18n="settingsDesc">Tùy biến không gian học tập giúp nâng cao hiệu quả tập trung</p>
+
+    <!-- Language Selection -->
+    <div class="settings-group">
+      <label data-i18n="langLabel">Ngôn ngữ</label>
+      <div class="lang-options">
+        <button class="btn-lang active" data-lang="vi">Tiếng Việt</button>
+        <button class="btn-lang" data-lang="en">English</button>
+      </div>
+    </div>
+
+    <!-- Theme selection -->
+    <div class="settings-group">
+      <label data-i18n="themeLabel">Chủ đề màu sắc</label>
+      <div class="theme-options">
+        <button class="btn-theme active" data-theme="cream">
+          <span class="theme-dot" style="background: #FAF7F2; border: 1px solid #C4B7A5;"></span>
+          <span data-i18n="themeCream">🏡 Kem ấm áp</span>
+        </button>
+        <button class="btn-theme" data-theme="matcha">
+          <span class="theme-dot" style="background: #E8EBE4; border: 1px solid #DADFCF;"></span>
+          <span data-i18n="themeMatcha">🍵 Matcha Tea</span>
+        </button>
+        <button class="btn-theme" data-theme="indigo">
+          <span class="theme-dot" style="background: #12181A; border: 1px solid #1B2427;"></span>
+          <span data-i18n="themeIndigo">🌲 Rừng đêm tối</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Brightness/Dimmer Slider -->
+    <div class="settings-group">
+      <div class="slider-header">
+        <label for="brightness-slider" data-i18n="dimmerLabel">Bộ giảm độ sáng màn hình</label>
+        <span class="slider-value" id="brightness-value" data-i18n="dimmerBrightest">Sáng nhất</span>
+      </div>
+      <input type="range" id="brightness-slider" min="0" max="70" step="5" value="0">
+    </div>
+
+    <!-- BGM Selection -->
+    <div class="settings-group">
+      <label data-i18n="bgmLabel">Nhạc nền tập trung</label>
+      <select id="bgm-selector" class="select-bgm">
+        <option value="off" data-i18n="bgmOff">Tắt nhạc</option>
+        <option value="minecraft">Minecraft Lo-Fi Calm</option>
+        <option value="cozystudio">Cozy Studio Lo-Fi</option>
+      </select>
+    </div>
+
+    <!-- BGM Volume Slider -->
+    <div class="settings-group">
+      <div class="slider-header">
+        <label for="bgm-volume" data-i18n="bgmVolLabel">Âm lượng nhạc</label>
+        <span class="slider-value" id="bgm-vol-value">50%</span>
+      </div>
+      <input type="range" id="bgm-volume" min="0" max="100" step="5" value="50">
+    </div>
+  </div>
+
+
+  <!-- Javascript File -->
+  <script type="module" src="app.js?v=5.0"></script>
+</body>
+
+</html>
